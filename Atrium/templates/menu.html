@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+    <header>
+        
+    </header>
+    <head>
+        <meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+		
+		<meta name="description" content="Saisie des bénéficiaire" />
+		<meta name="keywords" content="Atrium" />
+		<meta name="author" content="Thomas Sirot" />
+		<link rel="shortcut icon" href="../favicon.ico">
+		<link rel="stylesheet" type="text/css" href="{% static 'menu/css/style.css' %}" />
+    </head>
+    <h1>
+        <a href="{% url 'index' %}">
+        <img src="https://upload.wikimedia.org/wikipedia/fr/8/80/Secours_populaire_logo.svg" alt="Description de l'image" width="100" height="100">
+        </a>
+        Distri'pop
+    </h1>
+<nav>
+    <ul id="main">
+    <li><a href="{% url 'distribution' %}">Distribution</a></li>
+      <li>Beneficiaire
+        <ul class="drop">
+          <div>
+          <li><a href="{% url 'creation' %}">Création</a></li>
+          <li><a href="{% url 'maj_beneficiaire' %}">Mise à jour</a></li>
+          <li><a href="{% url 'attribuer_aide' %}">Attribuer une aide</a></li>
+          </div>
+        </ul>
+      </li>
+      <li><a href="{% url 'parametre' %}">Paramètre</a></li>
+      <div id="marker"></div>
+    </ul>
+  </nav>
+</html>

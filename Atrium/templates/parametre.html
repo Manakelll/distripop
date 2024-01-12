@@ -1,0 +1,132 @@
+<!-- template.html -->
+{% include 'menu.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <title>{{ titre }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'form/css/style.css' %}" />
+</head>
+<body>
+    <h1>{{titre}}</h1>
+    <form method="post">
+        {% csrf_token %}
+        <p>
+            <div class="inline-fields">
+                <fieldset>
+                    <legend>Paramètres Générales :</legend>
+                    Montant du colis : {{ form1.montant }}
+                    Ecart de validitée en jour : {{ form1.ecart_validite }}
+                </fieldset>
+               
+            </div>
+        </p>
+        <p>
+            <div class="historique">
+                <fieldset class="fieldset-line">
+                    <legend>Listing des Aides existantes :</legend>
+                    <p>
+                        
+                        <table border="1" id="historique">
+                            <thead>
+                               
+                                <th>Intitulé de l'Aide</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+                                {% for k in aide %}
+                                <tr>
+                                    
+                                    <td>{{ k.aide }}</td>
+                                    <td class='select'>
+                                        <a class='button' onclick="supprimerLigne({{ k.Id }})">
+                                            Supprimer
+                                        </a>
+                                        
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            
+                            
+                            
+                           
+                        </table>
+                    </p>
+                </fieldset>
+                
+                
+            </div>
+            </p>
+            <p>
+                <fieldset class="fieldset-line">
+                    <legend>Ajouter une aide</legend>
+                    <p>
+                        Intitulé de l'aide à ajouter {{ form1.intitule_aide }}
+                    </p>
+                </fieldset>
+            </p>
+            <p>
+                <input type="submit" value="Soumettre">
+            </p>
+       
+    
+        
+    </form>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function supprimerLigne(id){
+            $.ajax({
+                type:"GET",
+                url: "/del_aide/",
+                data : {"id":id},
+                success:function(response){
+                    if ('error' in response){
+                        alert("error")
+
+                    }else{
+                        actualisation()
+                    }
+                }
+            })
+
+        }
+        function actualisation() {
+    $.ajax({
+        type: "GET",
+        url: "/recherche_parametre/",
+        success: function (response) {
+            if ('error' in response) {
+                alert("error");
+            } else {
+                $('#id_montant').val(response.montant);
+                $('#id_ecart_validite').val(response.ecart_validite);
+                $('#id_intitule_aide').val("");
+                $('#historique tbody').empty();
+
+                response.aide.forEach(function (k) {
+                    $('#historique tbody').append(
+                        `<tr>
+                            <td>${k.aide}</td>
+                            <td class='select'>
+                                <a class='button' onclick="supprimerLigne(${k.Id})">
+                                    Supprimer
+                                </a>
+                            </td>
+                        </tr>`
+                    );
+                });
+            }
+        }
+    });
+}
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Votre code JavaScript ici
+            actualisation();
+        });
+    </script>  
+</body>
+</html>

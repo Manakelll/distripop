@@ -1,0 +1,109 @@
+<!-- template.html -->
+{% include 'menu.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <title>{{ titre }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'form/css/style.css' %}" />
+</head>
+<body>
+    <h1>{{titre}}</h1>
+    <form method="post" id="form1">
+        {% csrf_token %}
+        <p>
+            <div class="inline-fields">
+                <fieldset>
+                    <legend>Identification :</legend>
+                    Numéro Atrium : {{ form1.num_atrium }}
+                    Date de validitée : {{ form1.date_validite }}
+                </fieldset>
+               
+            </div>
+            </p>
+            <!-- Sur la même ligne : nom et prenom -->
+            <p>
+                <fieldset class="fieldset-line">
+                    <legend>Information du Bénéficiaire :</legend>
+            <div class="name-fields">
+                Nom : {{ form1.nom }}
+                Prenom : {{ form1.prenom }}
+            </div>
+            </p>
+            <!-- Sur la même ligne : nbr_beneficiaire, nbr_adulte et nbr_enfant -->
+            <p>
+            <div class="number-fields">
+                
+                Nombre d'Adulte : {{ form1.nbr_adulte }}
+                Nombre d'Enfant : {{ form1.nbr_enfant }}
+            </div>
+            </p>
+            </fieldset>
+            <p>
+                <input type="submit" value="Soumettre">
+            </p>
+       
+    
+        
+    </form>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function(){
+    $(document).on('submit', '#form1', function(event){
+        var num_atrium = $('#id_num_atrium').val();
+        var nom = $('#id_nom').val();
+        var prenom = $('#id_prenom').val();
+        var date_validite = $('#id_date_validite').val();
+        var nbr_adulte =$('#id_nbr_adulte').val();
+        var nbr_enfant = $('#id_nbr_enfant').val();
+        event.preventDefault(); 
+        Swal.fire({
+            title: 'Confirmez-vous la création du bénéficiaire ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Oui',
+            cancelButtonText: 'Non'
+        }).then((result) => {
+            if (result.isConfirmed){
+                creation(num_atrium, nom, prenom, date_validite, nbr_adulte, nbr_enfant )
+            }
+        })
+    });
+});
+function creation(num_atrium, nom, prenom, date_validite, nbr_adulte, nbr_enfant)
+{
+    $.ajax({
+        type: "GET",
+        url:"/cree_beneficiaire/",
+        data: {'num_atrium':num_atrium, 'nom':nom, 'prenom':prenom, 'date_validite':date_validite, 'nbr_adulte':nbr_adulte, 'nbr_enfant': nbr_enfant},
+        success:function(response){
+            if ('error' in response){
+                Swal.fire({
+                    title:"Une erreur s'est produit",
+                    icon:"error",
+                    showCancelButton: false,
+                    confirmButtonText:"Ok"
+                })
+
+            }else {
+                Swal.fire({
+                        title:"Création effectuée avec succés",
+                        icon:"success",
+                        showCancelButton: false,
+                        confirmButtonText:"OK,"
+                        }).then((result) => {
+                            if (result.isConfirmed){
+                                window.location.href = "{% url 'distribution' %}";
+                            }
+
+                        })
+            }
+        }
+    })
+
+}
+</script>
+</body>
+</html>

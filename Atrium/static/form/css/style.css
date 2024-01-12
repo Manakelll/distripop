@@ -1,0 +1,211 @@
+
+#id_form1,
+#id_form2{
+    display: inline-block;
+    vertical-align: top;
+    margin-right: 20px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Appliquer un style pour aligner num_atrium et date_validite sur la même ligne */
+.inline-fields {
+    display: inline-block;
+    gap: 10px; /* Ajouter un espace entre les champs */
+}
+.fieldset-line {
+    width: 26%;
+    display: inline-block;
+    gap: 10px; /* Ajouter un espace entre les champs */
+}
+/* Appliquer un style pour aligner nom et prenom sur la même ligne */
+.name-fields {
+    display: inline-block;
+    gap: 10px; /* Ajouter un espace entre les champs */
+}
+
+/* Appliquer un style pour aligner nbr_beneficiaire, nbr_adulte et nbr_enfant sur la même ligne */
+.number-fields {
+    display: inline-block;
+    gap: 10px; /* Ajouter un espace entre les champs */
+    
+}
+.number-fields input{
+    width: 50px;
+}
+/* Appliquer un style pour aligner historique (label puis field) sur la même ligne */
+
+/* Appliquer un style pour aligner dist sur une nouvelle ligne */
+body .dist {
+    text-align:justify;
+}
+body .dist2{
+    text-align: center;
+}
+.dist2 label {
+    margin-left: 5%;
+    margin-right: 15px;
+    line-height: 40px;
+
+}
+.dist input {
+    
+    vertical-align: middle;
+    margin-bottom: 10px;
+    margin: 0 auto;
+    display: inline-block;
+    
+}
+.dist label {
+    margin-left: 42%;
+    margin-right: 44px;
+    line-height: 60px;
+    
+}
+form button {
+    width: auto;
+}
+
+/*** Table Styles **/
+table {
+    
+    max-height: 500px;  /* Ajustez la hauteur maximale selon vos besoins */
+    overflow-y: auto;  /* Ajoute une barre de défilement vertical si nécessaire */
+    margin: 0 auto;
+    width: 100%;
+}
+.table-fill {
+    background: white;
+    border-radius:3px;
+    border-collapse: collapse;
+    /*height: 320px;*/
+    margin: 0 auto;
+    /*max-width: 600px;*/
+    padding:5px;
+    width: 150%;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    animation: float 5s infinite;
+  }
+.table-fill table {
+    width: 100%;
+}
+
+   
+  th {
+    color:#D5DDE5;;
+    background:#1b1e24;
+    border-bottom:4px solid #9ea7af;
+    border-right: 1px solid #343a45;
+    font-size:15px;
+    font-weight: 100;
+    padding:24px;
+    text-align:left;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    vertical-align:middle;
+  }
+  
+  th:first-child {
+    border-top-left-radius:3px;
+  }
+   
+  th:last-child {
+    border-top-right-radius:3px;
+    border-right:none;
+  }
+    
+  tr {
+    border-top: 1px solid #C1C3D1;
+    border-bottom: 1px solid #C1C3D1;
+    color:#666B85;
+    font-size:10px;
+    font-weight:normal;
+    text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+  }
+   
+  tr:hover td {
+    background:#4E5066;
+    color:#FFFFFF;
+    border-top: 1px solid #22262e;
+  }
+   
+  tr:first-child {
+    border-top:none;
+  }
+  
+  tr:last-child {
+    border-bottom:none;
+  }
+   
+  tr:nth-child(odd) td {
+    background:#f5f7f6;
+  }
+   
+  tr:nth-child(odd):hover td {
+    background:#4E5066;
+  }
+  
+  tr:last-child td:first-child {
+    border-bottom-left-radius:3px;
+  }
+   
+  tr:last-child td:last-child {
+    border-bottom-right-radius:3px;
+  }
+   
+  td {
+    background:#FFFFFF;
+    padding: 15px;
+    text-align:center;
+    vertical-align:middle;
+    font-weight:300;
+    font-size:15px;
+    text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+    border-right: 1px solid #C1C3D1;
+  }
+  
+  td:last-child {
+    border-right: 0px;
+  }
+  
+  th.text-left {
+    text-align: left;
+  }
+  
+  th.text-center {
+    text-align: center;
+  }
+  
+  th.text-right {
+    text-align: right;
+  }
+  
+  td.text-left {
+    text-align: left;
+  }
+  
+  td.text-center {
+    text-align: center;
+  }
+  
+  td.text-right {
+    text-align: right;
+  }
+  
+.button {
+    line-height: 1;
+    display: inline-block;
+    font-size: 1.2rem;
+    text-decoration: none;
+    border-radius: 5px;
+    color: #ea0f0f;
+    padding: 8px;
+    background-color: darken;
+}
+.select {
+    &:before {
+      display: none;
+    }
+    padding-bottom: 20px;
+    border-bottom: 1px solid darken;
+}

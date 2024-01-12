@@ -1,0 +1,383 @@
+<!-- template.html -->
+{% include 'menu.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <title>{{ titre }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'form/css/style.css' %}" />
+</head>
+<body>
+    <h1>{{titre}}</h1>
+    <form method="post" id="id_form1">
+        {% csrf_token %}
+        
+        <!-- Sur la même ligne : num_atrium et date_validite -->
+        <p>
+        <div class="inline-fields">
+            <fieldset>
+                <legend>Identification :</legend>
+                Numéro Atrium : {{ form1.num_atrium }}
+                Date de validitée : {{ form1.date_validite }}
+            </fieldset>
+           
+        </div>
+        </p>
+        <!-- Sur la même ligne : nom et prenom -->
+        <p>
+            <fieldset>
+                <legend>Information du Bénéficiaire :</legend>
+        <div class="name-fields">
+            Nom : {{ form1.nom }}
+            Prenom : {{ form1.prenom }}
+        </div>
+        </p>
+        <!-- Sur la même ligne : nbr_beneficiaire, nbr_adulte et nbr_enfant -->
+        <p>
+        <div class="number-fields">
+            Total Bénéficiaires : {{ form1.nbr_beneficiaire }}
+            Nombre d'Adulte : {{ form1.nbr_adulte }}
+            Nombre d'Enfant : {{ form1.nbr_enfant }}
+        </div>
+        </p>
+        </fieldset>
+        <!-- Sur la même ligne : historique (label puis field) -->
+        <p>
+        <div class="historique">
+            <fieldset>
+                <legend>Historique du Bénéficiaire :</legend>
+                <p>
+                    
+                    <table border="1" id="historique">
+                        <thead>
+                            <th>Date de Distribution/Credit</th>
+                            <th>Type de paiement</th>
+                            <th>Montant</th>
+                        </thead>
+                        <tbody>
+                            {% for k in historique %}
+                            <tr>
+                                <td>{{k.date_paiement}}</td>
+                                <td>{{k.type_paiement}}</td>
+                                <td>{{k.montant}}</td>
+                            
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        
+                        
+                       
+                    </table>
+                </p>
+            </fieldset>
+            
+            
+        </div>
+        </p>
+        <!-- Sur une nouvelle ligne : dist -->
+        <p>
+        <div class="dist">
+            <fieldset>
+                <legend>Selectionner la distribution :</legend>
+                <p>{{ form1.dist }}</p>
+            </fieldset>
+            
+            
+        </div>
+        </p>
+        <p>
+        <input type="submit" value="Soumettre">
+        </p>
+    </form>
+    
+    <form method="post" id="id_form2">
+        {% csrf_token %}
+        <!-- Champs pour le deuxième formulaire -->
+        <fieldset>
+            <legend>Situation du Bénéficiaire :</legend>
+            <p>
+                <div class="number-fields">
+                    {{ form2.atrium_hidden }}
+                    Reste Avance : {{ form2.avance }}
+                    Montant Dette : {{ form2.dette }}
+                    Nombre de Gratuit : {{ form2.gratuit }}
+                </div>
+            </p>
+        </fieldset>
+        <p>
+        <fieldset>
+            <legend>Créditer le Bénéficiaire</legend>
+            <p>
+                Montant à Créditer : {{ form2.credit }}
+                <button type="submit">Créditer</button>
+            </p>
+        </fieldset>
+        </p>
+       
+    </form>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    
+    $(document).ready(function(){
+        $('#id_num_atrium').keypress(function(event){
+            if(event.keyCode == 13){ // Vérifie si la touche pressée est "Entrée" (keyCode 13)
+                event.preventDefault(); // Empêche le comportement par défaut de la touche "Entrée"
+                var num_atrium = $(this).val();
+                verif_date(num_atrium)
+            
+            }
+        });
+        $('#id_num_atrium').on('click', function() {
+            // Votre code à exécuter lorsqu'un clic se produit
+            reset_field();
+        });
+    });
+    $(document).ready(function(){
+        $(document).on('submit', '#id_form2', function(event){
+            event.preventDefault(); 
+            var num_atrium = $('#id_atrium_hidden').val(); // Valeur à soumettre depuis le formulaire 2
+            var credit = $('#id_credit').val()
+            var avance = $('#id_avance').val()
+            var dette = $('#id_dette').val()
+            var gratuit = $('#id_gratuit').val()
+            // Envoi des données du formulaire 2
+            crediter(num_atrium, credit, avance, dette, gratuit)
+            
+        });
+    });
+    $(document).ready(function(){
+    $(document).on('submit', '#id_form1', function(event){
+        event.preventDefault(); 
+        var num_atrium = $('#id_num_atrium').val(); // Valeur à soumettre depuis le formulaire 1
+        var dist = $('input[name="dist"]:checked').val();
+        creer_distribution(num_atrium, dist)
+        
+    });
+});
+let validationRequise = false;
+
+function activerValidation() {
+    validationRequise = true;
+}
+$('input[name="dist"]').on('change', function() {
+    activerValidation();
+});
+window.addEventListener('beforeunload', function(event) {
+    if (validationRequise) {
+        event.returnValue = `Are you sure you want to leave?`;
+    }
+    
+});
+
+
+function creer_distribution(num_atrium, dist){
+    Swal.fire({
+            title: 'Confirmez-vous la distribution de type ' + dist + ' ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Oui',
+            cancelButtonText: 'Non'
+        }).then((result) => {
+            if (result.isConfirmed){
+                $.ajax({
+                        type: 'GET',
+                        url : '/creer_distribution/',
+                        data : {'num_atrium': num_atrium, 'dist':dist},
+                        success:function(response){
+                            if ('error' in response){
+                                modifier_distribution(num_atrium, dist)
+                            }else{
+                                Swal.fire({
+                                        title:"Saisie enregistrée avec succés",
+                                        icon:"success",
+                                        showCancelButton: false,
+                                        confirmButtonText:"OK,"
+                                }).then((result) => {
+                                    if (result.isConfirmed){
+                                        recherche(num_atrium)
+                                    }
+
+                                })
+                
+            }
+        }
+      })
+
+            }
+
+
+
+        })
+     
+    
+}
+
+function recherche(num_atrium){
+    $.ajax({
+        type :'GET',
+        url: '/recherche/',
+        data: {'num_atrium':num_atrium},
+        success:function(response){
+            if ('error' in response){
+                Swal.fire({
+                    title:"Beneficiaire inconnu",
+                    icon:"error",
+                    showCancelButton: false,
+                    confirmButtonText:"Ok"
+                })
+            }else{
+
+                $('#id_nom').val(response.nom);
+                $('#id_prenom').val(response.prenom);
+                $('#id_date_validite').val(response.date_validite);
+                $('#id_nbr_beneficiaire').val(response.nbr_beneficiaire);
+                $('#id_nbr_adulte').val(response.nbr_adulte);
+                $('#id_nbr_enfant').val(response.nbr_enfant);
+                $('#id_gratuit').val(response.gratuit);
+                $('#id_avance').val(response.avance);
+                $('#id_dette').val(response.dette);
+                $('#id_atrium_hidden').val(response.atrium_hidden);
+                $('#id_num_atrium').val(response.num_atrium);
+                $('#historique tbody').empty();
+                response.historique.forEach(function (k) {
+                    $('#historique tbody').append(
+                        `<tr>
+                             <td>${k.date_distribution}</td>
+                             <td>${k.type_paiement}</td>
+                             <td>${k.montant}</td>
+                         </tr>`
+                    );
+                });
+                let boutonsRadioDist = document.querySelectorAll('input[name="dist"]');
+                boutonsRadioDist.forEach(function(bouton) {
+                        bouton.checked = false;
+                });
+                validationRequise=false;
+               
+                
+            }
+        }
+    })
+}
+
+function modifier_distribution(num_atrium, dist){
+    Swal.fire({
+        title: 'Une saisie pour la date d\'aujourd\'hui existe déjà. Voulez-vous modifier ?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Oui',
+        cancelButtonText: 'Non'
+
+    }).then((result) => {
+        if (result.isConfirmed){
+            $.ajax({
+                type:'GET',
+                url: '/modifier_distribution/',
+                data: {'num_atrium': num_atrium},
+                success:function(response){
+                    if ('error' in response){
+                        allert(error);
+                    }else{
+                        creer_distribution(num_atrium, dist)
+                    }
+                }
+            })
+        }
+
+    })
+}
+function crediter(num_atrium, credit, avance, dette, gratuit ){
+    Swal.fire({
+            title: 'Confirmez vous le crédit de ' + credit +' euro(s) ?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Oui',
+            cancelButtonText: 'Non'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                            
+                    $.ajax({
+                        type: 'GET',
+                        url : '/crediter/',
+                        data: {'num_atrium': num_atrium, 'credit':credit, 'avance':avance, 'dette':dette},
+                        success: function(response) {
+                        if ('error' in response){
+                            alert(response.error)
+
+                            } else {
+                                $('#id_credit').val("");
+                                recherche(num_atrium)
+                            }
+                                }
+                            });
+                                            
+                        }
+                        else {
+                            window.location.href = "{% url 'distribution' %}";
+                        }
+                        
+                    });
+    
+}
+function verif_date(num_atrium){
+    $.ajax({
+        type: 'GET',
+        url : '/verification_validite/',
+        data : {'num_atrium': num_atrium},
+        success: function(response){
+            if ('date' in response){
+                Swal.fire({
+                    title : 'Attention, date de validité dépassée, souhaitez vous effecuter une distribution ?',
+                    icon : "question",
+                    showCancelButton: true,
+                    confirmButtonText: 'Oui',
+                    cancelButtonText: 'Non'
+
+                }).then((result) =>  {
+                    if(result.isConfirmed){
+                        confirmed = true;
+                        recherche(num_atrium)
+                    }else{
+                        window.location.href = "{% url 'distribution' %}";
+                    }
+                })
+            }if ('error' in response) {
+                Swal.fire({
+                    title:"Beneficiaire inconnu",
+                    icon:"error",
+                    showCancelButton: false,
+                    confirmButtonText:"Ok"
+                })  
+                
+            }else{
+                recherche(num_atrium)
+            }
+
+        }
+    })
+}
+function reset_field(){
+    $('#id_nom').val("");
+    $('#id_prenom').val("");
+    $('#id_date_validite').val("");
+    $('#id_nbr_beneficiaire').val("");
+    $('#id_nbr_adulte').val("");
+    $('#id_nbr_enfant').val("");
+    $('#historique tbody').empty();
+    $('#id_gratuit').val("");
+    $('#id_avance').val("");
+    $('#id_dette').val("");
+    $('#id_atrium_hidden').val("");
+    $('#id_num_atrium').val("");
+    let boutonsRadioDist = document.querySelectorAll('input[name="dist"]');
+    boutonsRadioDist.forEach(function(bouton) {
+        bouton.checked = false;
+    });
+    validationRequise=false;
+    
+}
+</script>
+</body>
+</html>
